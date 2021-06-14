@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=scr, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <script>
+        var s = 1;
+        var e = 10;
+        var data = "";
+        function createtrth(elementname, value = "") {
+            var td = document.createElement(elementname)
+            td.innerHTML = value;
+            return td;
+        }
+
+        function foo() {
+            var table = document.getElementById('main');
+            table.setAttribute('class', 'table');
+            var thead = document.createElement('thead');
+            thead.setAttribute('class', 'thead-dark');
+            var request = new XMLHttpRequest();
+            request.open('GET', 'https://raw.githubusercontent.com/Rajavasanthan/jsondata/master/pagenation.json', true);
+            request.send();
+            request.onload = function () {
+                data = JSON.parse(this.response);
+                // var td = document.createElement('td');
+                // td.innerHTML=data[i].id;
+                // return td;
+                // document.body.append(table);
+                if (data.length > 0) {
+                    var thead = document.createElement('thead');
+                    thead.setAttribute('class', 'thead-dark');
+                    var tr = document.createElement('tr');
+                    var th1 = createtrth('th', 'ID');
+                    var th2 = createtrth('th', 'NAME');
+                    var th3 = createtrth('th', 'EMAIL');
+                    tr.append(th1, th2, th3);
+                    thead.append(tr);
+                    table.append(thead);
+                    var tbody = document.createElement('tbody');
+                    tbody.setAttribute('id', 'tablebody');
+                    table.append(tbody);
+                    paging(0, 10);
+                    if (data.length > 10) {
+                        renderpages();
+                    }
+                }
+
+            }
+
+        }
+        function renderpages() {
+            var noofpages = data.length / 10;
+            var button = document.createElement('button');
+            button.setAttribute('onclick', 'previous()');
+            button.innerHTML = 'previous';
+            document.getElementsByClassName('pagination')[0].appendChild(button);
+            for (var i = 1; i <= noofpages; i++) {
+                var p = document.createElement('li');
+                p.setAttribute('class', 'page-item');
+                var q = document.createElement('a');
+                q.setAttribute('class', 'page-link');
+                q.setAttribute('href', '#');
+                q.setAttribute('onclick', 'paging(' + ((i - 1) * 10).toString() + ',' + (i * 10).toString() + ')');
+                q.innerHTML = i.toString();
+                p.appendChild(q);
+                document.getElementsByClassName('pagination')[0].appendChild(p);
+            }
+            var button = document.createElement('button');
+            button.setAttribute('onclick', 'next()');
+            button.innerHTML = 'next';
+            document.getElementsByClassName('pagination')[0].appendChild(button);
+
+        }
+        function next() {
+            paging((s + 10), (e + 10));
+        }
+        function previous() {
+            paging((s - 10), (e - 10));
+        }
+        function paging(start, end) {
+            s = start;
+            e = end;
+            var table = document.getElementById('tablebody');
+            table.innerHTML = '';
+            for (var i = start; i < end; i++) {
+
+                var tr = document.createElement('tr');
+
+                var tdId = document.createElement('td');
+                var tdName = document.createElement('td');
+                var tdEmail = document.createElement('td');
+
+                var txtId = document.createTextNode(data[i]["id"]);
+                var txtName = document.createTextNode(data[i]["name"]);
+                var txtEmail = document.createTextNode(data[i]["email"]);
+
+                tdId.appendChild(txtId);
+                tdName.appendChild(txtName);
+                tdEmail.appendChild(txtEmail);
+                tr.appendChild(tdId);
+                tr.appendChild(tdName);
+                tr.appendChild(tdEmail);
+                table.appendChild(tr);
+            }
+            // document.body.appendChild(table);
+
+        }
+
+    </script>
+    <input type="Button" value="click" onclick="foo()"></input>
+    <table id="main"></table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
+        </ul>
+    </nav>
+</body>
+
+</html>
